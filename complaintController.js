@@ -1,0 +1,61 @@
+const Complaint = require('../models/Complaint');
+
+// Create a new complaint
+exports.createComplaint = async (req, res) => {
+    try {
+        const complaint = new Complaint(req.body);
+        await complaint.save();
+        res.status(201).json(complaint);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+// Get all complaints
+exports.getComplaints = async (req, res) => {
+    try {
+        const complaints = await Complaint.find();
+        res.status(200).json(complaints);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// Get a specific complaint by ID
+exports.getComplaintById = async (req, res) => {
+    try {
+        const complaint = await Complaint.findById(req.params.id);
+        if (!complaint) {
+            return res.status(404).json({ message: 'Complaint not found' });
+        }
+        res.status(200).json(complaint);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// Update a complaint by ID
+exports.updateComplaint = async (req, res) => {
+    try {
+        const complaint = await Complaint.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        if (!complaint) {
+            return res.status(404).json({ message: 'Complaint not found' });
+        }
+        res.status(200).json(complaint);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+// Delete a complaint by ID
+exports.deleteComplaint = async (req, res) => {
+    try {
+        const complaint = await Complaint.findByIdAndDelete(req.params.id);
+        if (!complaint) {
+            return res.status(404).json({ message: 'Complaint not found' });
+        }
+        res.status(204).send();
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
